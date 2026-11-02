@@ -1,0 +1,13 @@
+# Netlify configuration for the NexusForge Planner frontend (Vite + React)
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Single-page app: send every route (e.g. /?plan=proj-1) to index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
