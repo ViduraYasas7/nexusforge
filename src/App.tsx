@@ -46,7 +46,8 @@ import {
   MessageCircle,
   Send,
   Play,
-  Pause
+  Pause,
+  Gamepad2
 } from 'lucide-react';
 import {
   PortfolioProject,
@@ -66,6 +67,7 @@ import {
   PlannerScheduleView,
   PlannerTaskModal
 } from './PlannerViews';
+import { StressReliefGamesView } from './StressReliefGames';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -103,6 +105,10 @@ export function App() {
 
   // Theme State: 'dark' (default) or 'light' (Color/Light Mode)
   const [themeMode, setThemeMode] = useState<'dark' | 'light'>(() => {
+    try {
+      const qTheme = new URLSearchParams(window.location.search).get('theme');
+      if (qTheme === 'light' || qTheme === 'dark') return qTheme;
+    } catch {}
     const saved = localStorage.getItem('nexusforge_theme_mode');
     return saved === 'light' ? 'light' : 'dark';
   });
@@ -156,10 +162,28 @@ export function App() {
     return projects[0]?.id || INITIAL_PROJECTS[0].id;
   });
 
-  const [activeTab, setActiveTab] = useState<'tasks' | 'linkedin' | 'overview' | 'admin'>('tasks');
-  const [taskViewMode, setTaskViewMode] = useState<'board' | 'list' | 'schedule' | 'charts'>('board');
+  const [activeTab, setActiveTab] = useState<'tasks' | 'linkedin' | 'overview' | 'admin'>(() => {
+    try {
+      const qTab = new URLSearchParams(window.location.search).get('tab');
+      if (qTab === 'overview' || qTab === 'admin' || qTab === 'linkedin') return qTab;
+    } catch {}
+    return 'tasks';
+  });
+  const [taskViewMode, setTaskViewMode] = useState<'board' | 'list' | 'schedule' | 'charts' | 'games'>(() => {
+    try {
+      const qView = new URLSearchParams(window.location.search).get('view');
+      if (qView === 'list' || qView === 'board' || qView === 'schedule' || qView === 'charts' || qView === 'games') return qView;
+    } catch {}
+    return 'board';
+  });
   const [groupBy, setGroupBy] = useState<GroupByOption>('Bucket');
-  const [personalView, setPersonalView] = useState<'all' | 'myday' | 'assigned'>('all');
+  const [personalView, setPersonalView] = useState<'all' | 'myday' | 'assigned'>(() => {
+    try {
+      const qFilter = new URLSearchParams(window.location.search).get('filter');
+      if (qFilter === 'myday' || qFilter === 'assigned') return qFilter;
+    } catch {}
+    return 'all';
+  });
   const [pinnedIds, setPinnedIds] = useState<string[]>(() => projects.map((p) => p.id));
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -167,7 +191,13 @@ export function App() {
   const [postFormat, setPostFormat] = useState<'feed_post' | 'profile_project'>('feed_post');
 
   // Universal Share Modal State (URL + Any Platform Share)
-  const [showShareModal, setShowShareModal] = useState(false);
+  const [showShareModal, setShowShareModal] = useState<boolean>(() => {
+    try {
+      return new URLSearchParams(window.location.search).get('modal') === 'share';
+    } catch {
+      return false;
+    }
+  });
   const [shareUrlCopied, setShareUrlCopied] = useState(false);
   const [shareSummaryCopied, setShareSummaryCopied] = useState(false);
 
@@ -190,7 +220,13 @@ export function App() {
   };
 
   // Inline Assignee Popover in Grid View
-  const [assigneePopoverTaskId, setAssigneePopoverTaskId] = useState<string | null>(null);
+  const [assigneePopoverTaskId, setAssigneePopoverTaskId] = useState<string | null>(() => {
+    try {
+      return new URLSearchParams(window.location.search).get('popover') === 'assignee' ? 'task-nf-2' : null;
+    } catch {
+      return null;
+    }
+  });
   const [memberSearchQuery, setMemberSearchQuery] = useState('');
 
   // Collapsible Completed Tasks per Bucket in Board View
@@ -211,6 +247,9 @@ export function App() {
   // ADMIN LOCK / PUBLIC READ-ONLY STATE
   // ==========================================
   const [isAdmin, setIsAdmin] = useState<boolean>(() => {
+    try {
+      if (new URLSearchParams(window.location.search).get('admin') === 'true') return true;
+    } catch {}
     return localStorage.getItem('nexusforge_is_admin') === 'true';
   });
 
@@ -248,7 +287,14 @@ export function App() {
   const [newTaskCategory] = useState<ProjectTask['category']>('Feature');
   const [newTaskPriority] = useState<TaskPriority>('Medium');
 
-  const [editingTask, setEditingTask] = useState<ProjectTask | null>(null);
+  const [editingTask, setEditingTask] = useState<ProjectTask | null>(() => {
+    try {
+      if (new URLSearchParams(window.location.search).get('modal') === 'task') {
+        return INITIAL_TASKS[0];
+      }
+    } catch {}
+    return null;
+  });
 
   useEffect(() => {
     localStorage.setItem('nexusforge_simple_projects', JSON.stringify(projects));
@@ -828,23 +874,27 @@ Technologies Used: ${currentProject.techStack.join(', ')}`;
     );
   };
 
-  // Theme Classes for Dark Mode vs Light/Color Mode
+  // Theme Classes for NexusForge Studio (Distinct Emerald-Teal & Indigo Developer Identity)
   const appBarBg = isLight
-    ? 'bg-[#5b5fc7] text-white border-[#4f52b2]'
-    : 'bg-[#141414] text-white border-[#292929]';
+    ? 'bg-gradient-to-r from-slate-900 via-indigo-950 to-emerald-950 text-white border-slate-800'
+    : 'bg-gradient-to-r from-[#0d1017] via-[#131824] to-[#0f1722] text-white border-[#222938]';
   const sidebarBg = isLight
     ? 'bg-white border-slate-200 text-slate-800'
-    : 'bg-[#141414] border-[#292929] text-white';
-  const mainBg = isLight ? 'bg-[#f5f6fa] text-slate-900' : 'bg-[#1f1f1f] text-white';
+    : 'bg-[#0f1219] border-[#222938] text-white';
+  const mainBg = isLight ? 'bg-[#f4f6fb] text-slate-900' : 'bg-[#141821] text-white';
   const headerBg = isLight
     ? 'bg-white border-slate-200 text-slate-900 shadow-xs'
-    : 'bg-[#1f1f1f] border-[#292929] text-white';
+    : 'bg-[#171c26] border-[#242b3a] text-white';
   const surfaceCard = isLight
     ? 'bg-white border-slate-200 text-slate-900 shadow-xs'
-    : 'bg-[#292929] border-[#3a3a3a] text-white';
+    : 'bg-[#1e2430] border-[#2e3646] text-white';
   const completedCard = isLight
     ? 'bg-slate-100 border-slate-200 text-slate-700'
-    : 'bg-[#242424] border-[#333333] text-zinc-300';
+    : 'bg-[#181d27] border-[#262d3b] text-zinc-300';
+
+  const completedTasksCount = projectTasks.filter((t) => t.status === 'Done').length;
+  const sprintCompletionPct =
+    projectTasks.length > 0 ? Math.round((completedTasksCount / projectTasks.length) * 100) : 0;
 
   return (
     <div
@@ -853,34 +903,50 @@ Technologies Used: ${currentProject.techStack.join(', ')}`;
       }`}
     >
       {/* ==========================================
-          TOP MICROSOFT 365 PLANNER APP BAR
+          TOP NEXUSFORGE STUDIO APP BAR
       ========================================== */}
-      <div className={`h-11 border-b px-4 flex items-center justify-between select-none shrink-0 transition-colors ${appBarBg}`}>
+      <div className={`h-12 border-b px-4 flex items-center justify-between select-none shrink-0 transition-colors ${appBarBg}`}>
         <div className="flex items-center gap-3">
-          <div className="grid grid-cols-3 gap-0.5 p-1.5 rounded hover:bg-white/10 cursor-pointer">
-            {Array.from({ length: 9 }).map((_, i) => (
-              <span key={i} className="w-1 h-1 rounded-full bg-white/90" />
-            ))}
-          </div>
-
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded bg-gradient-to-br from-white/90 via-[#a5b4fc] to-[#2eb899] flex items-center justify-center text-[10px] font-bold text-[#141414] shadow">
-              P
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-400 via-teal-500 to-indigo-600 flex items-center justify-center text-xs font-extrabold text-slate-950 shadow-md">
+              NF
             </div>
-            <span className="font-semibold text-sm text-white tracking-tight">Planner</span>
-            <span className="text-xs text-white/50">·</span>
-            <span className="text-xs font-semibold text-white/90">NexusForge</span>
-            <span className="text-[10px] px-1.5 py-0.2 rounded bg-white/20 text-white font-semibold">
-              OS
-            </span>
+            <div className="flex items-center gap-1.5">
+              <span className="font-bold text-sm text-white tracking-tight">NexusForge</span>
+              <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 font-bold">
+                OS
+              </span>
+              <span className="hidden sm:inline text-xs text-white/40">·</span>
+              <span className="hidden sm:inline text-[11px] font-medium text-zinc-300">
+                Engineering Sprint &amp; Portfolio Studio
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* Right App Bar Controls: Live Focus Timer + Dark/Color Theme Toggle + Overview + Settings */}
+        {/* Right App Bar Controls: Quick Break Arcade + Live Focus Timer + Theme Toggle + Overview + Settings */}
         <div className="flex items-center gap-2">
+          {/* Quick Stress-Relief Arcade Trigger in Top Bar */}
+          <button
+            type="button"
+            onClick={() => {
+              setActiveTab('tasks');
+              setTaskViewMode('games');
+            }}
+            title="Open Stress-Relief Break Arcade (2 Mini Games)"
+            className={`px-2.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 border transition-all ${
+              activeTab === 'tasks' && taskViewMode === 'games'
+                ? 'bg-emerald-500 text-slate-950 border-emerald-400 shadow-sm'
+                : 'bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border-emerald-500/30'
+            }`}
+          >
+            <Gamepad2 className="w-3.5 h-3.5" />
+            <span className="hidden md:inline">Break Arcade</span>
+          </button>
+
           {/* Novelty: Built-in Focus Pomodoro Timer Pill */}
-          <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/25 border border-white/15 text-xs text-white">
-            <Clock className="w-3.5 h-3.5 text-[#2eb899]" />
+          <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/30 border border-white/15 text-xs text-white">
+            <Clock className="w-3.5 h-3.5 text-emerald-400" />
             <span className="font-mono font-semibold">{formatTimer(focusSeconds)}</span>
             <button
               type="button"
@@ -908,7 +974,7 @@ Technologies Used: ${currentProject.techStack.join(', ')}`;
             type="button"
             onClick={() => setThemeMode(isLight ? 'dark' : 'light')}
             title="Switch Fluent Dark / Light Theme"
-            className="px-2.5 py-1 rounded-full bg-white/15 hover:bg-white/25 text-white text-xs font-medium flex items-center gap-1.5 transition-colors"
+            className="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-medium flex items-center gap-1.5 transition-colors"
           >
             {isLight ? (
               <>
@@ -943,7 +1009,7 @@ Technologies Used: ${currentProject.techStack.join(', ')}`;
             </button>
           )}
 
-          <div className="w-7 h-7 rounded-full bg-white/20 border border-white/30 text-white text-xs font-bold flex items-center justify-center ml-1">
+          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-emerald-500 to-indigo-600 text-white text-xs font-bold flex items-center justify-center ml-1 shadow-xs">
             VL
           </div>
         </div>
@@ -958,11 +1024,11 @@ Technologies Used: ${currentProject.techStack.join(', ')}`;
         ========================================== */}
         <aside className={`w-full md:w-56 border-b md:border-b-0 md:border-r flex flex-col justify-between shrink-0 select-none transition-colors ${sidebarBg}`}>
           <div className="p-3 space-y-4">
-            {/* + Create a plan button */}
+            {/* + New Project / Plan button */}
             {isAdmin ? (
               <button
                 onClick={openCreateProjectModal}
-                className="w-full py-2 px-3 rounded-md bg-[#5b5fc7] hover:bg-[#4f52b2] text-white text-xs font-semibold flex items-center justify-between shadow-sm transition-colors"
+                className="w-full py-2 px-3 rounded-lg bg-gradient-to-r from-emerald-600 to-indigo-600 hover:from-emerald-500 hover:to-indigo-500 text-white text-xs font-semibold flex items-center justify-between shadow-sm transition-all"
               >
                 <span className="flex items-center gap-2">
                   <Plus className="w-4 h-4" />
@@ -973,31 +1039,32 @@ Technologies Used: ${currentProject.techStack.join(', ')}`;
             ) : (
               <button
                 onClick={() => setShowUnlockModal(true)}
-                className="w-full py-2 px-3 rounded-md bg-[#5b5fc7] hover:bg-[#4f52b2] text-white text-xs font-semibold flex items-center justify-between shadow-sm transition-colors"
+                className="w-full py-2 px-3 rounded-lg bg-gradient-to-r from-emerald-600 to-indigo-600 hover:from-emerald-500 hover:to-indigo-500 text-white text-xs font-semibold flex items-center justify-between shadow-sm transition-all"
               >
                 <span className="flex items-center gap-2">
                   <Plus className="w-4 h-4" />
-                  Create a plan
+                  New Workspace Plan
                 </span>
                 <ChevronDown className="w-3.5 h-3.5 opacity-80" />
               </button>
             )}
 
-            {/* 3 Core Planner Navigation Links */}
+            {/* Core Workspace Navigation Links */}
             <nav className="space-y-0.5">
               <button
                 onClick={() => {
                   setPersonalView('myday');
                   setActiveTab('tasks');
+                  if (taskViewMode === 'games') setTaskViewMode('board');
                 }}
-                className={`w-full text-left px-3 py-2 rounded-md text-xs flex items-center gap-3 transition-colors ${
-                  personalView === 'myday' && activeTab === 'tasks'
+                className={`w-full text-left px-3 py-2 rounded-lg text-xs flex items-center gap-3 transition-colors ${
+                  personalView === 'myday' && activeTab === 'tasks' && taskViewMode !== 'games'
                     ? isLight
-                      ? 'bg-indigo-50 text-[#5b5fc7] font-semibold'
-                      : 'bg-[#292929] text-white font-semibold'
+                      ? 'bg-emerald-50 text-emerald-700 font-semibold'
+                      : 'bg-[#1e2430] text-emerald-400 font-semibold'
                     : isLight
                     ? 'text-slate-600 hover:bg-slate-100'
-                    : 'text-zinc-300 hover:bg-[#1f1f1f] hover:text-white'
+                    : 'text-zinc-300 hover:bg-[#181d27] hover:text-white'
                 }`}
               >
                 <Sun className="w-4 h-4 text-amber-500" />
@@ -1008,18 +1075,19 @@ Technologies Used: ${currentProject.techStack.join(', ')}`;
                 onClick={() => {
                   setPersonalView('assigned');
                   setActiveTab('tasks');
+                  if (taskViewMode === 'games') setTaskViewMode('board');
                 }}
-                className={`w-full text-left px-3 py-2 rounded-md text-xs flex items-center gap-3 transition-colors ${
-                  personalView === 'assigned' && activeTab === 'tasks'
+                className={`w-full text-left px-3 py-2 rounded-lg text-xs flex items-center gap-3 transition-colors ${
+                  personalView === 'assigned' && activeTab === 'tasks' && taskViewMode !== 'games'
                     ? isLight
-                      ? 'bg-indigo-50 text-[#5b5fc7] font-semibold'
-                      : 'bg-[#292929] text-white font-semibold'
+                      ? 'bg-emerald-50 text-emerald-700 font-semibold'
+                      : 'bg-[#1e2430] text-emerald-400 font-semibold'
                     : isLight
                     ? 'text-slate-600 hover:bg-slate-100'
-                    : 'text-zinc-300 hover:bg-[#1f1f1f] hover:text-white'
+                    : 'text-zinc-300 hover:bg-[#181d27] hover:text-white'
                 }`}
               >
-                <CheckCircle2 className="w-4 h-4 text-[#5b5fc7]" />
+                <CheckCircle2 className="w-4 h-4 text-indigo-400" />
                 <span>My tasks</span>
               </button>
 
@@ -1027,31 +1095,56 @@ Technologies Used: ${currentProject.techStack.join(', ')}`;
                 onClick={() => {
                   setPersonalView('all');
                   setActiveTab('tasks');
+                  if (taskViewMode === 'games') setTaskViewMode('board');
                 }}
-                className={`w-full text-left px-3 py-2 rounded-md text-xs flex items-center gap-3 transition-colors ${
-                  personalView === 'all' && activeTab === 'tasks'
+                className={`w-full text-left px-3 py-2 rounded-lg text-xs flex items-center gap-3 transition-colors ${
+                  personalView === 'all' && activeTab === 'tasks' && taskViewMode !== 'games'
                     ? isLight
-                      ? 'bg-indigo-50 text-[#5b5fc7] font-semibold'
-                      : 'bg-[#292929] text-white font-semibold'
+                      ? 'bg-emerald-50 text-emerald-700 font-semibold'
+                      : 'bg-[#1e2430] text-emerald-400 font-semibold'
                     : isLight
                     ? 'text-slate-600 hover:bg-slate-100'
-                    : 'text-zinc-300 hover:bg-[#1f1f1f] hover:text-white'
+                    : 'text-zinc-300 hover:bg-[#181d27] hover:text-white'
                 }`}
               >
                 <LayoutGrid className="w-4 h-4 text-emerald-500" />
                 <span>My plans</span>
               </button>
+
+              <button
+                onClick={() => {
+                  setActiveTab('tasks');
+                  setTaskViewMode('games');
+                }}
+                className={`w-full text-left px-3 py-2 rounded-lg text-xs flex items-center justify-between transition-colors ${
+                  activeTab === 'tasks' && taskViewMode === 'games'
+                    ? isLight
+                      ? 'bg-emerald-50 text-emerald-700 font-semibold'
+                      : 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-semibold'
+                    : isLight
+                    ? 'text-slate-600 hover:bg-slate-100'
+                    : 'text-zinc-300 hover:bg-[#181d27] hover:text-white'
+                }`}
+              >
+                <span className="flex items-center gap-3">
+                  <Gamepad2 className="w-4 h-4 text-emerald-400" />
+                  <span>Stress Relief Games</span>
+                </span>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold">
+                  2 GAMES
+                </span>
+              </button>
             </nav>
 
-            {/* Pinned Plans Section */}
-            <div className={`pt-2 border-t ${isLight ? 'border-slate-200' : 'border-[#292929]'}`}>
-              <span className={`px-2 text-[11px] font-semibold block mb-2 ${isLight ? 'text-slate-500' : 'text-zinc-400'}`}>
-                Pinned
+            {/* Active Projects Section */}
+            <div className={`pt-2 border-t ${isLight ? 'border-slate-200' : 'border-[#222938]'}`}>
+              <span className={`px-2 text-[11px] font-semibold uppercase tracking-wider block mb-2 ${isLight ? 'text-slate-500' : 'text-zinc-400'}`}>
+                Workspaces
               </span>
               <div className="space-y-1">
                 {projects.map((proj, idx) => {
                   const isSelected = proj.id === currentProject?.id;
-                  const badgeColors = ['#0284c7', '#4f46e5', '#0d9488', '#d97706'];
+                  const badgeColors = ['#10b981', '#6366f1', '#0ea5e9', '#f59e0b'];
                   const code =
                     proj.code ||
                     proj.name
@@ -1068,18 +1161,18 @@ Technologies Used: ${currentProject.techStack.join(', ')}`;
                         setSelectedProjectId(proj.id);
                         if (activeTab === 'admin') setActiveTab('tasks');
                       }}
-                      className={`w-full text-left px-2.5 py-2 rounded-md flex items-center gap-2.5 transition-colors ${
+                      className={`w-full text-left px-2.5 py-2 rounded-lg flex items-center gap-2.5 transition-colors ${
                         isSelected
                           ? isLight
-                            ? 'bg-indigo-50 text-indigo-950 font-semibold'
-                            : 'bg-[#292929] text-white'
+                            ? 'bg-emerald-50 text-slate-900 font-semibold border border-emerald-200'
+                            : 'bg-[#1e2430] text-white border border-emerald-500/30'
                           : isLight
                           ? 'text-slate-600 hover:bg-slate-100'
-                          : 'text-zinc-400 hover:bg-[#1f1f1f] hover:text-zinc-200'
+                          : 'text-zinc-400 hover:bg-[#181d27] hover:text-zinc-200'
                       }`}
                     >
                       <span
-                        className="w-6 h-6 rounded text-[10px] font-bold text-white flex items-center justify-center shrink-0"
+                        className="w-6 h-6 rounded-md text-[10px] font-bold text-white flex items-center justify-center shrink-0 shadow-xs"
                         style={{ backgroundColor: badgeColors[idx % badgeColors.length] }}
                       >
                         {code}
@@ -1098,10 +1191,10 @@ Technologies Used: ${currentProject.techStack.join(', ')}`;
           </div>
 
           {/* Subtle Bottom Status & Admin Lock */}
-          <div className={`p-3 border-t space-y-2 ${isLight ? 'border-slate-200 bg-slate-50' : 'border-[#292929] bg-[#141414]'}`}>
+          <div className={`p-3 border-t space-y-2 ${isLight ? 'border-slate-200 bg-slate-50' : 'border-[#222938] bg-[#0d1017]'}`}>
             <div
-              className={`px-2.5 py-1.5 rounded border flex items-center justify-between text-[11px] ${
-                isLight ? 'bg-white border-slate-200 text-slate-700' : 'bg-[#1f1f1f] border-[#292929] text-zinc-300'
+              className={`px-2.5 py-1.5 rounded-lg border flex items-center justify-between text-[11px] ${
+                isLight ? 'bg-white border-slate-200 text-slate-700' : 'bg-[#161b24] border-[#242b3a] text-zinc-300'
               }`}
             >
               <span className="flex items-center gap-1.5">
@@ -1123,14 +1216,14 @@ Technologies Used: ${currentProject.techStack.join(', ')}`;
             {isAdmin ? (
               <button
                 onClick={handleLockAdmin}
-                className={`w-full py-1.5 px-2.5 rounded border text-[11px] flex items-center justify-between ${
+                className={`w-full py-1.5 px-2.5 rounded-lg border text-[11px] flex items-center justify-between ${
                   isLight
                     ? 'bg-white hover:bg-slate-100 border-slate-300 text-slate-800'
-                    : 'bg-[#1f1f1f] hover:bg-[#292929] border-[#333333] text-white'
+                    : 'bg-[#161b24] hover:bg-[#1e2430] border-[#2e3646] text-white'
                 }`}
               >
                 <span className="flex items-center gap-1.5">
-                  <Unlock className="w-3 h-3 text-[#5b5fc7]" />
+                  <Unlock className="w-3 h-3 text-emerald-400" />
                   Admin Mode: ON
                 </span>
                 <span className="text-[10px] opacity-70 underline">Lock</span>
@@ -1142,31 +1235,31 @@ Technologies Used: ${currentProject.techStack.join(', ')}`;
                   setPinError('');
                   setPinInput('');
                 }}
-                className={`w-full py-1.5 px-2.5 rounded border text-[11px] flex items-center justify-between ${
+                className={`w-full py-1.5 px-2.5 rounded-lg border text-[11px] flex items-center justify-between ${
                   isLight
                     ? 'bg-white hover:bg-slate-100 border-slate-200 text-slate-700'
-                    : 'bg-[#1f1f1f] hover:bg-[#292929] border-[#292929] text-zinc-300'
+                    : 'bg-[#161b24] hover:bg-[#1e2430] border-[#242b3a] text-zinc-300'
                 }`}
               >
                 <span className="flex items-center gap-1.5">
                   <Lock className="w-3 h-3 opacity-70" />
                   Public View (Locked)
                 </span>
-                <span className="text-[10px] text-[#5b5fc7] font-semibold">Unlock</span>
+                <span className="text-[10px] text-emerald-400 font-semibold">Unlock</span>
               </button>
             )}
           </div>
         </aside>
 
         {/* ==========================================
-            MAIN PLANNER WORKSPACE
+            MAIN NEXUSFORGE WORKSPACE
         ========================================== */}
         <main className={`flex-1 flex flex-col min-w-0 transition-colors ${mainBg}`}>
           {currentProject && (
             <>
-              {/* Clean Microsoft Planner Header: Breadcrumb + Pill View Tabs */}
+              {/* NexusForge Workspace Header: Project Identity + Sprint Progress + View Tabs */}
               <header className={`px-6 pt-4 pb-3 border-b space-y-3 transition-colors ${headerBg}`}>
-                {/* Row 1: Breadcrumb + Universal Share Button */}
+                {/* Row 1: Breadcrumb + Sprint Progress Pill + Universal Share Button */}
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="flex items-center gap-2 min-w-0">
                     <button
@@ -1179,11 +1272,11 @@ Technologies Used: ${currentProject.techStack.join(', ')}`;
                         isLight ? 'text-slate-500' : 'text-zinc-400'
                       }`}
                     >
-                      <LayoutGrid className="w-3.5 h-3.5" />
+                      <LayoutGrid className="w-3.5 h-3.5 text-emerald-400" />
                       My plans
                     </button>
-                    <span className="text-zinc-500 text-xs">&gt;</span>
-                    <span className="w-5 h-5 rounded bg-[#0284c7] text-white text-[10px] font-bold flex items-center justify-center shrink-0">
+                    <span className="text-zinc-500 text-xs">/</span>
+                    <span className="w-5 h-5 rounded-md bg-gradient-to-br from-emerald-500 to-indigo-600 text-white text-[10px] font-bold flex items-center justify-center shrink-0">
                       {currentProject.code || 'NF'}
                     </span>
                     <h2 className="text-base font-bold truncate">{currentProject.name}</h2>
@@ -1193,7 +1286,7 @@ Technologies Used: ${currentProject.techStack.join(', ')}`;
                       title={pinnedIds.includes(currentProject.id) ? 'Pinned plan' : 'Pin plan'}
                       className={`p-1 rounded transition-colors ${
                         pinnedIds.includes(currentProject.id)
-                          ? 'text-[#5b5fc7]'
+                          ? 'text-emerald-400'
                           : 'text-zinc-400 hover:text-white'
                       }`}
                     >
@@ -1206,15 +1299,15 @@ Technologies Used: ${currentProject.techStack.join(', ')}`;
                       }
                       title="Plan options & details"
                       className={`p-1 rounded ${
-                        isLight ? 'hover:bg-slate-100 text-slate-500' : 'hover:bg-[#292929] text-zinc-400 hover:text-white'
+                        isLight ? 'hover:bg-slate-100 text-slate-500' : 'hover:bg-[#242b3a] text-zinc-400 hover:text-white'
                       }`}
                     >
                       <MoreHorizontal className="w-4 h-4" />
                     </button>
                     {!isAdmin && (
                       <span
-                        className={`text-[11px] px-2 py-0.5 rounded ${
-                          isLight ? 'bg-slate-100 text-slate-600' : 'bg-[#292929] text-zinc-400'
+                        className={`text-[11px] px-2 py-0.5 rounded-md border ${
+                          isLight ? 'bg-slate-100 border-slate-200 text-slate-600' : 'bg-[#1e2430] border-[#2e3646] text-zinc-400'
                         }`}
                       >
                         Public Read-Only
@@ -1222,12 +1315,31 @@ Technologies Used: ${currentProject.techStack.join(', ')}`;
                     )}
                   </div>
 
-                  {/* Right Actions: Universal Share Button (Opens URL + Multi-Platform Share Modal) */}
-                  <div className="flex items-center gap-2">
+                  {/* Right Actions: Live Sprint Progress Bar + Universal Share Button */}
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`hidden sm:flex items-center gap-2 px-3 py-1 rounded-lg border text-xs ${
+                        isLight
+                          ? 'bg-slate-50 border-slate-200 text-slate-700'
+                          : 'bg-[#12161f] border-[#262d3d] text-zinc-300'
+                      }`}
+                    >
+                      <span className="text-[11px] opacity-75">Sprint Velocity:</span>
+                      <div className="w-20 h-2 rounded-full bg-zinc-700/50 overflow-hidden">
+                        <div
+                          className="h-full bg-gradient-to-r from-emerald-400 to-indigo-500 transition-all"
+                          style={{ width: `${sprintCompletionPct}%` }}
+                        />
+                      </div>
+                      <span className="font-bold text-emerald-400 text-[11px]">
+                        {sprintCompletionPct}%
+                      </span>
+                    </div>
+
                     <button
                       type="button"
                       onClick={() => setShowShareModal(true)}
-                      className="px-3.5 py-1.5 rounded-md bg-[#5b5fc7] hover:bg-[#4f52b2] text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm transition-colors"
+                      className="px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-emerald-600 to-indigo-600 hover:from-emerald-500 hover:to-indigo-500 text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm transition-all"
                     >
                       <Share2 className="w-3.5 h-3.5" />
                       <span>Share</span>
@@ -1238,7 +1350,7 @@ Technologies Used: ${currentProject.techStack.join(', ')}`;
                 {/* Hidden summary text for test compatibility */}
                 <p className="sr-only">{currentProject.summary}</p>
 
-                {/* Row 2: Microsoft Planner Oval Pill Tabs (Grid | Board | Calendar | Charts) */}
+                {/* Row 2: Workspace View Tabs (Grid | Board | Calendar | Charts | Break Arcade) */}
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="flex flex-wrap items-center gap-2">
                     <button
@@ -1246,14 +1358,14 @@ Technologies Used: ${currentProject.techStack.join(', ')}`;
                         setActiveTab('tasks');
                         setTaskViewMode('list');
                       }}
-                      className={`px-3.5 py-1 rounded-full text-xs font-medium flex items-center gap-1.5 border transition-all ${
+                      className={`px-3.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 border transition-all ${
                         activeTab === 'tasks' && taskViewMode === 'list'
                           ? isLight
-                            ? 'bg-indigo-50 text-[#5b5fc7] border-[#5b5fc7] font-semibold'
-                            : 'bg-[#292929] text-white border-[#7f85f5]'
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-500 font-semibold'
+                            : 'bg-emerald-500/15 text-emerald-300 border-emerald-500/50 font-semibold'
                           : isLight
                           ? 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'
-                          : 'bg-transparent text-zinc-300 border-[#3a3a3a] hover:bg-[#292929]'
+                          : 'bg-transparent text-zinc-300 border-[#2e3646] hover:bg-[#222938]'
                       }`}
                     >
                       <List className="w-3.5 h-3.5" />
@@ -1266,14 +1378,14 @@ Technologies Used: ${currentProject.techStack.join(', ')}`;
                         setActiveTab('tasks');
                         setTaskViewMode('board');
                       }}
-                      className={`px-3.5 py-1 rounded-full text-xs font-medium flex items-center gap-1.5 border transition-all ${
+                      className={`px-3.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 border transition-all ${
                         activeTab === 'tasks' && taskViewMode === 'board'
                           ? isLight
-                            ? 'bg-indigo-50 text-[#5b5fc7] border-[#5b5fc7] font-semibold'
-                            : 'bg-[#292929] text-white border-[#7f85f5]'
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-500 font-semibold'
+                            : 'bg-emerald-500/15 text-emerald-300 border-emerald-500/50 font-semibold'
                           : isLight
                           ? 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'
-                          : 'bg-transparent text-zinc-300 border-[#3a3a3a] hover:bg-[#292929]'
+                          : 'bg-transparent text-zinc-300 border-[#2e3646] hover:bg-[#222938]'
                       }`}
                     >
                       <LayoutGrid className="w-3.5 h-3.5" />
@@ -1287,14 +1399,14 @@ Technologies Used: ${currentProject.techStack.join(', ')}`;
                         setTaskViewMode('schedule');
                       }}
                       aria-label="Schedule"
-                      className={`px-3.5 py-1 rounded-full text-xs font-medium flex items-center gap-1.5 border transition-all ${
+                      className={`px-3.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 border transition-all ${
                         activeTab === 'tasks' && taskViewMode === 'schedule'
                           ? isLight
-                            ? 'bg-indigo-50 text-[#5b5fc7] border-[#5b5fc7] font-semibold'
-                            : 'bg-[#292929] text-white border-[#7f85f5]'
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-500 font-semibold'
+                            : 'bg-emerald-500/15 text-emerald-300 border-emerald-500/50 font-semibold'
                           : isLight
                           ? 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'
-                          : 'bg-transparent text-zinc-300 border-[#3a3a3a] hover:bg-[#292929]'
+                          : 'bg-transparent text-zinc-300 border-[#2e3646] hover:bg-[#222938]'
                       }`}
                     >
                       <CalendarIcon className="w-3.5 h-3.5" />
@@ -1306,14 +1418,14 @@ Technologies Used: ${currentProject.techStack.join(', ')}`;
                         setActiveTab('tasks');
                         setTaskViewMode('charts');
                       }}
-                      className={`px-3.5 py-1 rounded-full text-xs font-medium flex items-center gap-1.5 border transition-all ${
+                      className={`px-3.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 border transition-all ${
                         activeTab === 'tasks' && taskViewMode === 'charts'
                           ? isLight
-                            ? 'bg-indigo-50 text-[#5b5fc7] border-[#5b5fc7] font-semibold'
-                            : 'bg-[#292929] text-white border-[#7f85f5]'
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-500 font-semibold'
+                            : 'bg-emerald-500/15 text-emerald-300 border-emerald-500/50 font-semibold'
                           : isLight
                           ? 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'
-                          : 'bg-transparent text-zinc-300 border-[#3a3a3a] hover:bg-[#292929]'
+                          : 'bg-transparent text-zinc-300 border-[#2e3646] hover:bg-[#222938]'
                       }`}
                     >
                       <BarChart3 className="w-3.5 h-3.5" />
@@ -1321,10 +1433,29 @@ Technologies Used: ${currentProject.techStack.join(', ')}`;
                       <span className="sr-only">Charts & AI Radar</span>
                     </button>
 
-                    <span className={`h-4 w-px mx-1 ${isLight ? 'bg-slate-200' : 'bg-[#333333]'}`} />
+                    <button
+                      onClick={() => {
+                        setActiveTab('tasks');
+                        setTaskViewMode('games');
+                      }}
+                      className={`px-3.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 border transition-all ${
+                        activeTab === 'tasks' && taskViewMode === 'games'
+                          ? isLight
+                            ? 'bg-emerald-600 text-white border-emerald-600 font-semibold shadow-xs'
+                            : 'bg-gradient-to-r from-emerald-500 to-indigo-600 text-white border-emerald-400 font-semibold shadow-xs'
+                          : isLight
+                          ? 'bg-emerald-50/70 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
+                          : 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/20'
+                      }`}
+                    >
+                      <Gamepad2 className="w-3.5 h-3.5" />
+                      <span>🎮 Break Arcade</span>
+                    </button>
+
+                    <span className={`h-4 w-px mx-1 ${isLight ? 'bg-slate-200' : 'bg-[#2e3646]'}`} />
 
                     {/* Search input inline (only on tasks tab) */}
-                    {activeTab === 'tasks' && (
+                    {activeTab === 'tasks' && taskViewMode !== 'games' && (
                       <div className="relative flex items-center">
                         <Search className="w-3.5 h-3.5 text-zinc-400 absolute left-2.5 pointer-events-none" />
                         <input
@@ -1332,25 +1463,25 @@ Technologies Used: ${currentProject.techStack.join(', ')}`;
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
                           placeholder="Search tasks..."
-                          className={`pl-8 pr-3 py-1 rounded-full border text-xs w-40 focus:w-52 transition-all focus:outline-none focus:border-[#5b5fc7] ${
+                          className={`pl-8 pr-3 py-1 rounded-lg border text-xs w-40 focus:w-52 transition-all focus:outline-none focus:border-emerald-500 ${
                             isLight
                               ? 'bg-slate-100 border-slate-300 text-slate-900 placeholder-slate-400'
-                              : 'bg-[#141414] border-[#333333] text-white placeholder-zinc-500'
+                              : 'bg-[#11151d] border-[#2e3646] text-white placeholder-zinc-500'
                           }`}
                         />
                       </div>
                     )}
 
                     {/* Novelty: 1-Click AI Smart Subtask Button */}
-                    {activeTab === 'tasks' && (
+                    {activeTab === 'tasks' && taskViewMode !== 'games' && (
                       <button
                         type="button"
                         onClick={handleAutoBreakdownAllMissing}
                         title="AI Auto-Generate Checklists for tasks"
-                        className={`px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1.5 border transition-all ${
+                        className={`px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 border transition-all ${
                           isLight
-                            ? 'bg-indigo-50 text-[#5b5fc7] border-indigo-200 hover:bg-indigo-100'
-                            : 'bg-[#5b5fc7]/15 text-[#9ea2ff] border-[#5b5fc7]/40 hover:bg-[#5b5fc7]/25'
+                            ? 'bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100'
+                            : 'bg-indigo-500/15 text-indigo-300 border-indigo-500/35 hover:bg-indigo-500/25'
                         }`}
                       >
                         <Sparkles className="w-3 h-3" />
@@ -1387,10 +1518,10 @@ Technologies Used: ${currentProject.techStack.join(', ')}`;
                           isLight ? 'text-slate-900' : 'text-white'
                         }`}
                       >
-                        <option value="Bucket" className={isLight ? 'bg-white text-slate-900' : 'bg-[#1f1f1f] text-white'}>Bucket</option>
-                        <option value="Progress" className={isLight ? 'bg-white text-slate-900' : 'bg-[#1f1f1f] text-white'}>Progress</option>
-                        <option value="Priority" className={isLight ? 'bg-white text-slate-900' : 'bg-[#1f1f1f] text-white'}>Priority</option>
-                        <option value="Assigned To" className={isLight ? 'bg-white text-slate-900' : 'bg-[#1f1f1f] text-white'}>Assigned To</option>
+                        <option value="Bucket" className={isLight ? 'bg-white text-slate-900' : 'bg-[#171c26] text-white'}>Bucket</option>
+                        <option value="Progress" className={isLight ? 'bg-white text-slate-900' : 'bg-[#171c26] text-white'}>Progress</option>
+                        <option value="Priority" className={isLight ? 'bg-white text-slate-900' : 'bg-[#171c26] text-white'}>Priority</option>
+                        <option value="Assigned To" className={isLight ? 'bg-white text-slate-900' : 'bg-[#171c26] text-white'}>Assigned To</option>
                       </select>
                     </div>
                   )}
@@ -1403,16 +1534,16 @@ Technologies Used: ${currentProject.techStack.join(', ')}`;
                   className={`px-6 py-1.5 border-b flex items-center justify-between text-[11px] ${
                     isLight
                       ? 'bg-slate-100 border-slate-200 text-slate-600'
-                      : 'bg-[#181818] border-[#292929] text-zinc-400'
+                      : 'bg-[#11151d] border-[#222938] text-zinc-400'
                   }`}
                 >
                   <span className="flex items-center gap-1.5">
-                    <ShieldAlert className="w-3.5 h-3.5 opacity-70" />
+                    <ShieldAlert className="w-3.5 h-3.5 text-emerald-400" />
                     Viewing in Public Mode. Editing controls are locked.
                   </span>
                   <button
                     onClick={() => setShowUnlockModal(true)}
-                    className="text-[#5b5fc7] hover:underline font-semibold"
+                    className="text-emerald-400 hover:underline font-semibold"
                   >
                     Unlock Admin
                   </button>
@@ -2134,7 +2265,7 @@ Technologies Used: ${currentProject.techStack.join(', ')}`;
                                 </button>
                                 <button
                                   type="submit"
-                                  className="px-3 py-1 rounded bg-[#5b5fc7] text-white text-xs font-semibold"
+                                  className="px-3 py-1 rounded bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold"
                                 >
                                   Add
                                 </button>
@@ -2144,7 +2275,7 @@ Technologies Used: ${currentProject.techStack.join(', ')}`;
                             <button
                               type="button"
                               onClick={() => setShowAddBucket(true)}
-                              className="w-full py-2 px-4 rounded-md bg-[#5b5fc7] hover:bg-[#4f52b2] text-white text-xs font-semibold transition-colors shadow-sm"
+                              className="w-full py-2 px-4 rounded-lg bg-gradient-to-r from-emerald-600 to-indigo-600 hover:from-emerald-500 hover:to-indigo-500 text-white text-xs font-semibold transition-all shadow-sm"
                             >
                               Add a new bucket
                             </button>
@@ -2171,6 +2302,11 @@ Technologies Used: ${currentProject.techStack.join(', ')}`;
                         onSelectTask={(t) => setEditingTask(t)}
                         onAutoBreakdownAll={handleAutoBreakdownAllMissing}
                       />
+                    )}
+
+                    {/* VIEW E: STRESS-RELIEF BREAK ARCADE (2 MINI GAMES) */}
+                    {taskViewMode === 'games' && (
+                      <StressReliefGamesView isLight={isLight} />
                     )}
                   </div>
                 )}

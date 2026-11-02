@@ -25,7 +25,7 @@ import {
 } from './plannerUtils';
 
 // ==========================================
-// 1. MICROSOFT PLANNER CHARTS VIEW (Dark & Light/Color Theme Aware)
+// 1. NEXUSFORGE ANALYTICS CHARTS VIEW
 // ==========================================
 interface PlannerChartsProps {
   project: PortfolioProject;
@@ -83,9 +83,9 @@ export const PlannerChartsView: React.FC<PlannerChartsProps> = ({
 
   const cardSurface = isLight
     ? 'bg-white border-slate-200 text-slate-900 shadow-sm'
-    : 'bg-[#242424] border-[#333333] text-white';
-  const headerBorder = isLight ? 'border-slate-200' : 'border-[#333333]';
-  const gridLine = isLight ? 'border-slate-200' : 'border-[#333333]/70';
+    : 'bg-[#181b22] border-[#2a2f3d] text-white';
+  const headerBorder = isLight ? 'border-slate-200' : 'border-[#2a2f3d]';
+  const gridLine = isLight ? 'border-slate-200' : 'border-[#2a2f3d]/70';
   const mutedText = isLight ? 'text-slate-500' : 'text-zinc-300';
 
   return (
@@ -94,22 +94,22 @@ export const PlannerChartsView: React.FC<PlannerChartsProps> = ({
       <span className="sr-only">Status Breakdown</span>
       <span className="sr-only">Tasks by Bucket</span>
 
-      {/* Novelty Bar: AI Sprint Insights & 1-Click Auto-Subtask Generator */}
+      {/* AI Sprint Insights & 1-Click Auto-Subtask Generator */}
       <div
-        className={`p-4 rounded-xl border flex flex-wrap items-center justify-between gap-4 ${
+        className={`p-4 rounded-2xl border flex flex-wrap items-center justify-between gap-4 ${
           isLight
-            ? 'bg-indigo-50/80 border-indigo-200 text-slate-900'
-            : 'bg-[#242424] border-[#5b5fc7]/40 text-white'
+            ? 'bg-gradient-to-r from-emerald-50 via-teal-50 to-indigo-50 border-emerald-200 text-slate-900'
+            : 'bg-gradient-to-r from-[#132226] via-[#181b26] to-[#1f192e] border-emerald-500/30 text-white'
         }`}
       >
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-[#5b5fc7] text-white flex items-center justify-center shrink-0">
-            <Sparkles className="w-4 h-4" />
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-indigo-600 text-white flex items-center justify-center shrink-0 shadow">
+            <Sparkles className="w-5 h-5" />
           </div>
           <div>
             <div className="text-xs font-bold flex items-center gap-2">
               <span>AI Plan Velocity & Smart Insights</span>
-              <span className="px-2 py-0.5 rounded-full text-[10px] bg-emerald-500/20 text-emerald-500 font-semibold">
+              <span className="px-2 py-0.5 rounded-full text-[10px] bg-emerald-500/20 text-emerald-400 font-semibold">
                 {Math.round((completed / total) * 100)}% Complete
               </span>
             </div>
@@ -121,19 +121,19 @@ export const PlannerChartsView: React.FC<PlannerChartsProps> = ({
         <button
           type="button"
           onClick={onAutoBreakdownAll}
-          className="px-3.5 py-2 rounded-lg bg-[#5b5fc7] hover:bg-[#4f52b2] text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm transition-all"
+          className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all"
         >
           <Sparkles className="w-3.5 h-3.5" />
           AI Auto-Generate Checklists
         </button>
       </div>
 
-      {/* Top Row: 3 Microsoft Planner Chart Cards */}
+      {/* Top Row: 3 Chart Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Card 1: Status Donut Chart */}
-        <div className={`border rounded-xl p-5 flex flex-col justify-between min-h-[340px] ${cardSurface}`}>
+        <div className={`border rounded-2xl p-5 flex flex-col justify-between min-h-[340px] ${cardSurface}`}>
           <div className={`border-b pb-3 ${headerBorder}`}>
-            <h3 className="text-sm font-semibold">Status</h3>
+            <h3 className="text-sm font-bold">Status Overview</h3>
           </div>
 
           <div className="flex items-center justify-center py-6">
@@ -144,7 +144,7 @@ export const PlannerChartsView: React.FC<PlannerChartsProps> = ({
                   cy="90"
                   r={radius}
                   fill="transparent"
-                  stroke={isLight ? '#e2e8f0' : '#333333'}
+                  stroke={isLight ? '#e2e8f0' : '#2a2f3d'}
                   strokeWidth="22"
                 />
                 <circle
@@ -152,7 +152,7 @@ export const PlannerChartsView: React.FC<PlannerChartsProps> = ({
                   cy="90"
                   r={radius}
                   fill="transparent"
-                  stroke="#2eb899"
+                  stroke="#10b981"
                   strokeWidth="22"
                   strokeDasharray={`${compLen} ${circumference}`}
                   strokeDashoffset={0}
@@ -162,7 +162,7 @@ export const PlannerChartsView: React.FC<PlannerChartsProps> = ({
                   cy="90"
                   r={radius}
                   fill="transparent"
-                  stroke="#e15252"
+                  stroke="#f43f5e"
                   strokeWidth="22"
                   strokeDasharray={`${lateLen} ${circumference}`}
                   strokeDashoffset={-compLen}
@@ -172,7 +172,7 @@ export const PlannerChartsView: React.FC<PlannerChartsProps> = ({
                   cy="90"
                   r={radius}
                   fill="transparent"
-                  stroke="#5b5fc7"
+                  stroke="#6366f1"
                   strokeWidth="22"
                   strokeDasharray={`${inProgLen} ${circumference}`}
                   strokeDashoffset={-(compLen + lateLen)}
@@ -182,7 +182,7 @@ export const PlannerChartsView: React.FC<PlannerChartsProps> = ({
                   cy="90"
                   r={radius}
                   fill="transparent"
-                  stroke="#c4b5fd"
+                  stroke="#a5b4fc"
                   strokeWidth="22"
                   strokeDasharray={`${notStartLen} ${circumference}`}
                   strokeDashoffset={-(compLen + lateLen + inProgLen)}
@@ -197,24 +197,24 @@ export const PlannerChartsView: React.FC<PlannerChartsProps> = ({
 
           <div className={`flex flex-wrap items-center justify-center gap-4 text-[11px] pt-2 ${mutedText}`}>
             <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-sm bg-[#c4b5fd]" /> Not Started
+              <span className="w-2.5 h-2.5 rounded-full bg-[#a5b4fc]" /> Not Started
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-sm bg-[#5b5fc7]" /> In Progress
+              <span className="w-2.5 h-2.5 rounded-full bg-[#6366f1]" /> In Progress
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-sm bg-[#e15252]" /> Late
+              <span className="w-2.5 h-2.5 rounded-full bg-[#f43f5e]" /> Late
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-sm bg-[#2eb899]" /> Completed
+              <span className="w-2.5 h-2.5 rounded-full bg-[#10b981]" /> Completed
             </span>
           </div>
         </div>
 
         {/* Card 2: Priority Vertical Stacked Bar Chart */}
-        <div className={`border rounded-xl p-5 flex flex-col justify-between min-h-[340px] ${cardSurface}`}>
+        <div className={`border rounded-2xl p-5 flex flex-col justify-between min-h-[340px] ${cardSurface}`}>
           <div className={`border-b pb-3 ${headerBorder}`}>
-            <h3 className="text-sm font-semibold">Priority</h3>
+            <h3 className="text-sm font-bold">Priority Breakdown</h3>
           </div>
 
           <div className="flex-1 flex items-end justify-around gap-4 pt-8 pb-4 px-4 relative">
@@ -239,11 +239,11 @@ export const PlannerChartsView: React.FC<PlannerChartsProps> = ({
                 <div key={p.label} className="flex flex-col items-center z-10 flex-1 h-48 justify-end">
                   <div
                     style={{ height: `${Math.max(heightPct, pTasks.length > 0 ? 12 : 0)}%` }}
-                    className="w-6 rounded-t overflow-hidden flex flex-col"
+                    className="w-7 rounded-t-lg overflow-hidden flex flex-col"
                   >
-                    {pDone > 0 && <div style={{ flex: pDone }} className="bg-[#2eb899] w-full" />}
-                    {pLate > 0 && <div style={{ flex: pLate }} className="bg-[#e15252] w-full" />}
-                    {pRest > 0 && <div style={{ flex: pRest }} className="bg-[#c4b5fd] w-full" />}
+                    {pDone > 0 && <div style={{ flex: pDone }} className="bg-[#10b981] w-full" />}
+                    {pLate > 0 && <div style={{ flex: pLate }} className="bg-[#f43f5e] w-full" />}
+                    {pRest > 0 && <div style={{ flex: pRest }} className="bg-[#a5b4fc] w-full" />}
                   </div>
                   <span className={`text-[11px] mt-2 ${mutedText}`}>{p.label}</span>
                 </div>
@@ -253,24 +253,21 @@ export const PlannerChartsView: React.FC<PlannerChartsProps> = ({
 
           <div className={`flex flex-wrap items-center justify-center gap-4 text-[11px] pt-2 ${mutedText}`}>
             <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-sm bg-[#c4b5fd]" /> Not Started
+              <span className="w-2.5 h-2.5 rounded-full bg-[#a5b4fc]" /> Open
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-sm bg-[#5b5fc7]" /> In Progress
+              <span className="w-2.5 h-2.5 rounded-full bg-[#f43f5e]" /> Late
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-sm bg-[#e15252]" /> Late
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-sm bg-[#2eb899]" /> Completed
+              <span className="w-2.5 h-2.5 rounded-full bg-[#10b981]" /> Completed
             </span>
           </div>
         </div>
 
         {/* Card 3: Bucket Vertical Stacked Bar Chart */}
-        <div className={`border rounded-xl p-5 flex flex-col justify-between min-h-[340px] ${cardSurface}`}>
+        <div className={`border rounded-2xl p-5 flex flex-col justify-between min-h-[340px] ${cardSurface}`}>
           <div className={`border-b pb-3 ${headerBorder}`}>
-            <h3 className="text-sm font-semibold">Bucket</h3>
+            <h3 className="text-sm font-bold">Stage / Bucket Workload</h3>
           </div>
 
           <div className="flex-1 flex items-end justify-around gap-3 pt-8 pb-4 px-4 relative">
@@ -295,11 +292,11 @@ export const PlannerChartsView: React.FC<PlannerChartsProps> = ({
                 <div key={b.id} className="flex flex-col items-center z-10 flex-1 h-48 justify-end min-w-0">
                   <div
                     style={{ height: `${Math.max(heightPct, bTasks.length > 0 ? 12 : 0)}%` }}
-                    className="w-6 rounded-t overflow-hidden flex flex-col"
+                    className="w-7 rounded-t-lg overflow-hidden flex flex-col"
                   >
-                    {bDone > 0 && <div style={{ flex: bDone }} className="bg-[#2eb899] w-full" />}
-                    {bLate > 0 && <div style={{ flex: bLate }} className="bg-[#e15252] w-full" />}
-                    {bRest > 0 && <div style={{ flex: bRest }} className="bg-[#c4b5fd] w-full" />}
+                    {bDone > 0 && <div style={{ flex: bDone }} className="bg-[#10b981] w-full" />}
+                    {bLate > 0 && <div style={{ flex: bLate }} className="bg-[#f43f5e] w-full" />}
+                    {bRest > 0 && <div style={{ flex: bRest }} className="bg-[#a5b4fc] w-full" />}
                   </div>
                   <span className={`text-[10px] mt-2 truncate max-w-[65px] ${mutedText}`} title={b.name}>
                     {b.name}
@@ -311,25 +308,22 @@ export const PlannerChartsView: React.FC<PlannerChartsProps> = ({
 
           <div className={`flex flex-wrap items-center justify-center gap-4 text-[11px] pt-2 ${mutedText}`}>
             <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-sm bg-[#c4b5fd]" /> Not Started
+              <span className="w-2.5 h-2.5 rounded-full bg-[#a5b4fc]" /> Open
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-sm bg-[#5b5fc7]" /> In Progress
+              <span className="w-2.5 h-2.5 rounded-full bg-[#f43f5e]" /> Late
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-sm bg-[#e15252]" /> Late
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-sm bg-[#2eb899]" /> Completed
+              <span className="w-2.5 h-2.5 rounded-full bg-[#10b981]" /> Completed
             </span>
           </div>
         </div>
       </div>
 
       {/* Bottom Full-Width Card: Members Bar Chart */}
-      <div className={`border rounded-xl p-5 ${cardSurface}`}>
+      <div className={`border rounded-2xl p-5 ${cardSurface}`}>
         <div className={`border-b pb-3 mb-4 ${headerBorder}`}>
-          <h3 className="text-sm font-semibold">Members</h3>
+          <h3 className="text-sm font-bold">Team Member Allocation</h3>
         </div>
 
         <div className="h-48 flex items-end justify-around gap-4 pt-6 pb-2 px-6 relative">
@@ -353,10 +347,10 @@ export const PlannerChartsView: React.FC<PlannerChartsProps> = ({
               <div key={m.id} className="flex flex-col items-center z-10 flex-1 h-40 justify-end min-w-0">
                 <div
                   style={{ height: `${Math.max(heightPct, mTasks.length > 0 ? 14 : 4)}%` }}
-                  className="w-5 rounded-t overflow-hidden flex flex-col"
+                  className="w-6 rounded-t-lg overflow-hidden flex flex-col"
                 >
-                  {mDone > 0 && <div style={{ flex: mDone }} className="bg-[#2eb899] w-full" />}
-                  {mRest > 0 && <div style={{ flex: mRest }} className="bg-[#c4b5fd] w-full" />}
+                  {mDone > 0 && <div style={{ flex: mDone }} className="bg-[#10b981] w-full" />}
+                  {mRest > 0 && <div style={{ flex: mRest }} className="bg-[#6366f1] w-full" />}
                 </div>
                 <span className={`text-[11px] mt-2 truncate max-w-[110px] ${mutedText}`} title={m.name}>
                   {m.name.split(' ')[0]}
@@ -371,7 +365,7 @@ export const PlannerChartsView: React.FC<PlannerChartsProps> = ({
 };
 
 // ==========================================
-// 2. MICROSOFT PLANNER CALENDAR / SCHEDULE VIEW
+// 2. REAL MATHEMATICALLY ACCURATE CALENDAR SCHEDULE VIEW
 // ==========================================
 interface PlannerScheduleProps {
   tasks: ProjectTask[];
@@ -379,95 +373,260 @@ interface PlannerScheduleProps {
   onSelectTask: (task: ProjectTask) => void;
 }
 
-const MONTHS = ['January 2026', 'February 2026', 'March 2026', 'April 2026', 'May 2026', 'June 2026'];
+const MONTH_NAMES = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
+];
 
 export const PlannerScheduleView: React.FC<PlannerScheduleProps> = ({
   tasks,
   isLight,
   onSelectTask
 }) => {
-  const [monthIdx, setMonthIdx] = useState(2); // March 2026
+  // Default to March 2026 where the sprint tasks are scheduled, or jump to real Today
+  const [viewYear, setViewYear] = useState<number>(2026);
+  const [viewMonth, setViewMonth] = useState<number>(2); // 0-indexed: 2 = March 2026
+
+  const now = new Date();
+  const todayYear = now.getFullYear();
+  const todayMonth = now.getMonth();
+  const todayDate = now.getDate();
+
   const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+  // Compute exact weekday of the 1st of viewMonth (Monday = 0 ... Sunday = 6)
+  const firstDayJs = new Date(viewYear, viewMonth, 1).getDay(); // 0=Sun, 1=Mon...
+  const startOffset = (firstDayJs + 6) % 7;
+
+  // Exact number of days in current month and previous month
+  const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+  const daysInPrevMonth = new Date(viewYear, viewMonth, 0).getDate();
+
+  // Build 35 or 42 calendar cells so every week row is complete
+  const totalCells = startOffset + daysInMonth > 35 ? 42 : 35;
+
+  const calendarCells = Array.from({ length: totalCells }, (_, idx) => {
+    const dayOffset = idx - startOffset + 1;
+    if (dayOffset <= 0) {
+      return {
+        day: daysInPrevMonth + dayOffset,
+        isCurrentMonth: false,
+        dateStr: ''
+      };
+    }
+    if (dayOffset > daysInMonth) {
+      return {
+        day: dayOffset - daysInMonth,
+        isCurrentMonth: false,
+        dateStr: ''
+      };
+    }
+    const mm = String(viewMonth + 1).padStart(2, '0');
+    const dd = String(dayOffset).padStart(2, '0');
+    return {
+      day: dayOffset,
+      isCurrentMonth: true,
+      dateStr: `${viewYear}-${mm}-${dd}`
+    };
+  });
+
+  const handlePrevMonth = () => {
+    if (viewMonth === 0) {
+      setViewYear((y) => y - 1);
+      setViewMonth(11);
+    } else {
+      setViewMonth((m) => m - 1);
+    }
+  };
+
+  const handleNextMonth = () => {
+    if (viewMonth === 11) {
+      setViewYear((y) => y + 1);
+      setViewMonth(0);
+    } else {
+      setViewMonth((m) => m + 1);
+    }
+  };
+
+  const handleJumpToday = () => {
+    setViewYear(todayYear);
+    setViewMonth(todayMonth);
+  };
 
   const cardSurface = isLight
     ? 'bg-white border-slate-200 text-slate-900 shadow-sm'
-    : 'bg-[#242424] border-[#333333] text-white';
+    : 'bg-[#181b22] border-[#2a2f3d] text-white';
 
   return (
-    <div className={`border rounded-xl p-5 space-y-4 ${cardSurface}`}>
+    <div className={`border rounded-2xl p-5 space-y-4 ${cardSurface}`}>
       <span className="sr-only">Schedule & Sprint Timeline</span>
-      <div className={`flex items-center justify-between border-b pb-3 ${isLight ? 'border-slate-200' : 'border-[#333333]'}`}>
+      <div
+        className={`flex flex-wrap items-center justify-between gap-3 border-b pb-3 ${
+          isLight ? 'border-slate-200' : 'border-[#2a2f3d]'
+        }`}
+      >
         <div className="flex items-center gap-3">
-          <CalendarIcon className="w-4 h-4 text-[#5b5fc7]" />
-          <h3 className="text-sm font-semibold">{MONTHS[monthIdx]}</h3>
+          <div className="w-8 h-8 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center">
+            <CalendarIcon className="w-4 h-4" />
+          </div>
+          <div>
+            <h3 className="text-sm font-bold">
+              {MONTH_NAMES[viewMonth]} {viewYear}
+            </h3>
+            <p className={`text-[11px] ${isLight ? 'text-slate-500' : 'text-zinc-400'}`}>
+              Real-time Calendar — {daysInMonth} days ({daysOfWeek[startOffset]} start)
+            </p>
+          </div>
         </div>
-        <div className="flex items-center gap-1">
+
+        <div className="flex items-center gap-1.5">
           <button
             type="button"
-            onClick={() => setMonthIdx((prev) => (prev > 0 ? prev - 1 : MONTHS.length - 1))}
-            className={`p-1.5 rounded transition-colors ${isLight ? 'hover:bg-slate-100 text-slate-600' : 'hover:bg-[#333333] text-zinc-400 hover:text-white'}`}
+            onClick={handlePrevMonth}
+            title="Previous Month"
+            className={`p-1.5 rounded-lg border transition-colors ${
+              isLight
+                ? 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-700'
+                : 'bg-[#222631] hover:bg-[#2c3140] border-[#323846] text-zinc-300 hover:text-white'
+            }`}
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
           <button
             type="button"
-            onClick={() => setMonthIdx(2)}
-            className={`px-2.5 py-1 rounded text-xs font-medium ${isLight ? 'bg-slate-100 text-slate-800' : 'bg-[#333333] text-white'}`}
+            onClick={handleJumpToday}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors ${
+              isLight
+                ? 'bg-emerald-50 hover:bg-emerald-100 border-emerald-200 text-emerald-800'
+                : 'bg-emerald-500/15 hover:bg-emerald-500/25 border-emerald-500/30 text-emerald-400'
+            }`}
           >
             Today
           </button>
           <button
             type="button"
-            onClick={() => setMonthIdx((prev) => (prev < MONTHS.length - 1 ? prev + 1 : 0))}
-            className={`p-1.5 rounded transition-colors ${isLight ? 'hover:bg-slate-100 text-slate-600' : 'hover:bg-[#333333] text-zinc-400 hover:text-white'}`}
+            onClick={() => {
+              setViewYear(2026);
+              setViewMonth(2);
+            }}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
+              isLight
+                ? 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-700'
+                : 'bg-[#222631] hover:bg-[#2c3140] border-[#323846] text-zinc-300'
+            }`}
+          >
+            Sprint Month (Mar 2026)
+          </button>
+          <button
+            type="button"
+            onClick={handleNextMonth}
+            title="Next Month"
+            className={`p-1.5 rounded-lg border transition-colors ${
+              isLight
+                ? 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-700'
+                : 'bg-[#222631] hover:bg-[#2c3140] border-[#323846] text-zinc-300 hover:text-white'
+            }`}
           >
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
       </div>
 
-      <div className={`grid grid-cols-7 gap-px border rounded-lg overflow-hidden ${isLight ? 'bg-slate-200 border-slate-200' : 'bg-[#333333] border-[#333333]'}`}>
+      {/* 7-Column Calendar Grid */}
+      <div
+        className={`grid grid-cols-7 gap-px border rounded-xl overflow-hidden ${
+          isLight ? 'bg-slate-200 border-slate-200' : 'bg-[#2a2f3d] border-[#2a2f3d]'
+        }`}
+      >
         {daysOfWeek.map((d) => (
           <div
             key={d}
-            className={`py-2 px-3 text-[11px] font-medium ${isLight ? 'bg-slate-50 text-slate-500' : 'bg-[#1f1f1f] text-zinc-400'}`}
+            className={`py-2.5 px-3 text-[11px] font-bold uppercase tracking-wider ${
+              isLight ? 'bg-slate-50 text-slate-500' : 'bg-[#14171f] text-zinc-400'
+            }`}
           >
             {d}
           </div>
         ))}
-        {Array.from({ length: 28 }, (_, i) => {
-          const dayNum = i + 1;
-          const dayTasks = tasks.filter((t, idx) => {
-            if (t.dueDate) {
-              const d = parseInt(t.dueDate.split('-')[2] || '0', 10);
-              if (d === dayNum) return true;
-            }
-            return ((idx * 6 + 3 + monthIdx) % 28) + 1 === dayNum;
-          });
+
+        {calendarCells.map((cell, idx) => {
+          const isTodayCell =
+            cell.isCurrentMonth &&
+            viewYear === todayYear &&
+            viewMonth === todayMonth &&
+            cell.day === todayDate;
+
+          // Match tasks by exact dueDate / startDate, or map by day number within the current month so tasks are always visible
+          const cellTasks = cell.isCurrentMonth
+            ? tasks.filter((t) => {
+                if (t.dueDate === cell.dateStr || t.startDate === cell.dateStr) return true;
+                if (t.dueDate) {
+                  const parts = t.dueDate.split('-');
+                  const dNum = parseInt(parts[2] || '0', 10);
+                  const mNum = parseInt(parts[1] || '0', 10) - 1;
+                  if (mNum === viewMonth && dNum === cell.day) return true;
+                }
+                return false;
+              })
+            : [];
 
           return (
             <div
-              key={dayNum}
-              className={`min-h-[96px] p-2 flex flex-col justify-between transition-colors ${
-                isLight ? 'bg-white hover:bg-slate-50' : 'bg-[#242424] hover:bg-[#2a2a2a]'
+              key={idx}
+              className={`min-h-[100px] p-2 flex flex-col justify-between transition-colors ${
+                !cell.isCurrentMonth
+                  ? isLight
+                    ? 'bg-slate-50/60 text-slate-300'
+                    : 'bg-[#13161d] text-zinc-600'
+                  : isLight
+                  ? 'bg-white hover:bg-slate-50 text-slate-800'
+                  : 'bg-[#181b22] hover:bg-[#1e222b] text-zinc-200'
               }`}
             >
-              <span className={`text-xs ${isLight ? 'text-slate-500' : 'text-zinc-400'}`}>{dayNum}</span>
-              <div className="space-y-1 mt-1">
-                {dayTasks.slice(0, 2).map((t) => (
+              <div className="flex items-center justify-between">
+                <span
+                  className={`text-xs font-semibold ${
+                    isTodayCell
+                      ? 'px-2 py-0.5 rounded-full bg-emerald-500 text-black font-bold'
+                      : ''
+                  }`}
+                >
+                  {cell.day}
+                </span>
+                {isTodayCell && (
+                  <span className="text-[10px] font-bold text-emerald-400">Today</span>
+                )}
+              </div>
+
+              <div className="space-y-1 mt-1.5">
+                {cellTasks.slice(0, 2).map((t) => (
                   <button
                     key={t.id}
                     onClick={() => onSelectTask(t)}
-                    className={`w-full text-left px-2 py-1 rounded text-[11px] truncate flex items-center gap-1.5 ${
-                      isLight
-                        ? 'bg-indigo-50 hover:bg-indigo-100 text-indigo-950 border border-indigo-200'
-                        : 'bg-[#33344a] hover:bg-[#444663] text-white'
+                    className={`w-full text-left px-2 py-1 rounded-md text-[11px] truncate flex items-center gap-1.5 transition-all ${
+                      t.status === 'Done'
+                        ? isLight
+                          ? 'bg-emerald-50 text-emerald-900 border border-emerald-200'
+                          : 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30'
+                        : isLight
+                        ? 'bg-indigo-50 text-indigo-900 border border-indigo-200'
+                        : 'bg-indigo-500/20 text-indigo-200 border border-indigo-500/30'
                     }`}
                   >
                     {t.status === 'Done' ? (
-                      <CheckCircle2 className="w-3 h-3 text-[#5b5fc7] shrink-0" />
+                      <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0" />
                     ) : (
-                      <Circle className="w-3 h-3 text-zinc-400 shrink-0" />
+                      <Circle className="w-3 h-3 text-indigo-400 shrink-0" />
                     )}
                     <span className={t.status === 'Done' ? 'line-through opacity-75 truncate' : 'truncate'}>
                       {t.title}
@@ -484,7 +643,7 @@ export const PlannerScheduleView: React.FC<PlannerScheduleProps> = ({
 };
 
 // ==========================================
-// 3. CLEAN MICROSOFT PLANNER TASK DETAILS MODAL
+// 3. TASK DETAILS INSPECTOR MODAL
 // ==========================================
 interface PlannerTaskModalProps {
   task: ProjectTask;
@@ -549,12 +708,12 @@ export const PlannerTaskModal: React.FC<PlannerTaskModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/75 flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-[#242424] border border-[#3a3a3a] rounded-xl max-w-2xl w-full p-6 space-y-5 shadow-2xl text-white">
-        <div className="flex items-center justify-between border-b border-[#333333] pb-3">
-          <h3 className="text-base font-semibold text-white">Edit Task / Feature</h3>
+      <div className="bg-[#181b22] border border-[#2a2f3d] rounded-2xl max-w-2xl w-full p-6 space-y-5 shadow-2xl text-white">
+        <div className="flex items-center justify-between border-b border-[#2a2f3d] pb-3">
+          <h3 className="text-base font-bold text-white">Edit Task / Feature</h3>
           <button
             onClick={onClose}
-            className="text-zinc-400 hover:text-white px-2 py-1 rounded hover:bg-[#333333]"
+            className="text-zinc-400 hover:text-white px-2 py-1 rounded hover:bg-[#2a2f3d]"
           >
             ✕
           </button>
@@ -567,7 +726,7 @@ export const PlannerTaskModal: React.FC<PlannerTaskModalProps> = ({
               type="text"
               value={draft.title}
               onChange={(e) => setDraft({ ...draft, title: e.target.value })}
-              className="w-full px-3 py-2 rounded-lg bg-[#1a1a1a] border border-[#3a3a3a] text-sm text-white focus:outline-none focus:border-[#5b5fc7]"
+              className="w-full px-3 py-2 rounded-xl bg-[#101318] border border-[#2a2f3d] text-sm text-white focus:outline-none focus:border-emerald-500"
             />
           </div>
           <div>
@@ -576,7 +735,7 @@ export const PlannerTaskModal: React.FC<PlannerTaskModalProps> = ({
               type="text"
               value={draft.result}
               onChange={(e) => setDraft({ ...draft, result: e.target.value })}
-              className="w-full px-3 py-2 rounded-lg bg-[#1a1a1a] border border-[#3a3a3a] text-sm text-white focus:outline-none focus:border-[#5b5fc7]"
+              className="w-full px-3 py-2 rounded-xl bg-[#101318] border border-[#2a2f3d] text-sm text-white focus:outline-none focus:border-emerald-500"
             />
           </div>
         </div>
@@ -594,8 +753,8 @@ export const PlannerTaskModal: React.FC<PlannerTaskModalProps> = ({
                   onClick={() => toggleAssignee(m.id)}
                   className={`px-2.5 py-1 rounded-full text-xs flex items-center gap-1.5 border transition-all ${
                     active
-                      ? 'bg-[#5b5fc7]/25 border-[#5b5fc7] text-white'
-                      : 'bg-[#1a1a1a] border-[#333333] text-zinc-400 hover:text-white'
+                      ? 'bg-emerald-500/20 border-emerald-500 text-white'
+                      : 'bg-[#101318] border-[#2a2f3d] text-zinc-400 hover:text-white'
                   }`}
                 >
                   <span
@@ -618,7 +777,7 @@ export const PlannerTaskModal: React.FC<PlannerTaskModalProps> = ({
             <select
               value={draft.bucketId || 'bucket-initiating'}
               onChange={(e) => setDraft({ ...draft, bucketId: e.target.value })}
-              className="w-full px-2.5 py-2 rounded-lg bg-[#1a1a1a] border border-[#3a3a3a] text-xs text-white"
+              className="w-full px-2.5 py-2 rounded-xl bg-[#101318] border border-[#2a2f3d] text-xs text-white"
             >
               {buckets.map((b) => (
                 <option key={b.id} value={b.id}>
@@ -633,7 +792,7 @@ export const PlannerTaskModal: React.FC<PlannerTaskModalProps> = ({
             <select
               value={draft.status}
               onChange={(e) => setDraft({ ...draft, status: e.target.value as TaskStatus })}
-              className="w-full px-2.5 py-2 rounded-lg bg-[#1a1a1a] border border-[#3a3a3a] text-xs text-white"
+              className="w-full px-2.5 py-2 rounded-xl bg-[#101318] border border-[#2a2f3d] text-xs text-white"
             >
               <option value="To Do">Not started</option>
               <option value="In Progress">In progress</option>
@@ -646,7 +805,7 @@ export const PlannerTaskModal: React.FC<PlannerTaskModalProps> = ({
             <select
               value={draft.priority}
               onChange={(e) => setDraft({ ...draft, priority: e.target.value as TaskPriority })}
-              className="w-full px-2.5 py-2 rounded-lg bg-[#1a1a1a] border border-[#3a3a3a] text-xs text-white"
+              className="w-full px-2.5 py-2 rounded-xl bg-[#101318] border border-[#2a2f3d] text-xs text-white"
             >
               <option value="Urgent">Urgent</option>
               <option value="Important">Important</option>
@@ -661,7 +820,7 @@ export const PlannerTaskModal: React.FC<PlannerTaskModalProps> = ({
               type="date"
               value={draft.startDate || ''}
               onChange={(e) => setDraft({ ...draft, startDate: e.target.value })}
-              className="w-full px-2.5 py-1.5 rounded-lg bg-[#1a1a1a] border border-[#3a3a3a] text-xs text-white"
+              className="w-full px-2.5 py-1.5 rounded-xl bg-[#101318] border border-[#2a2f3d] text-xs text-white"
             />
           </div>
 
@@ -671,7 +830,7 @@ export const PlannerTaskModal: React.FC<PlannerTaskModalProps> = ({
               type="date"
               value={draft.dueDate || ''}
               onChange={(e) => setDraft({ ...draft, dueDate: e.target.value })}
-              className="w-full px-2.5 py-1.5 rounded-lg bg-[#1a1a1a] border border-[#3a3a3a] text-xs text-white"
+              className="w-full px-2.5 py-1.5 rounded-xl bg-[#101318] border border-[#2a2f3d] text-xs text-white"
             />
           </div>
 
@@ -688,7 +847,7 @@ export const PlannerTaskModal: React.FC<PlannerTaskModalProps> = ({
                     className={`px-2 py-0.5 rounded text-[10px] font-semibold transition-all ${
                       active
                         ? `${lbl.pillBg} ${lbl.pillText} ring-2 ring-white`
-                        : 'bg-[#1a1a1a] text-zinc-400 border border-[#333333]'
+                        : 'bg-[#101318] text-zinc-400 border border-[#2a2f3d]'
                     }`}
                   >
                     {lbl.name}
@@ -700,9 +859,9 @@ export const PlannerTaskModal: React.FC<PlannerTaskModalProps> = ({
         </div>
 
         {/* Novelty: Focus Pomodoro Timer */}
-        <div className="p-3 rounded-lg bg-[#1a1a1a] border border-[#333333] flex items-center justify-between">
+        <div className="p-3 rounded-xl bg-[#101318] border border-[#2a2f3d] flex items-center justify-between">
           <div className="flex items-center gap-2 text-xs">
-            <Clock className="w-4 h-4 text-[#2eb899]" />
+            <Clock className="w-4 h-4 text-emerald-400" />
             <span>
               Focus Time Logged: <strong>{draft.loggedMinutes || 0} mins</strong>
             </span>
@@ -711,14 +870,14 @@ export const PlannerTaskModal: React.FC<PlannerTaskModalProps> = ({
             <button
               type="button"
               onClick={() => setDraft({ ...draft, loggedMinutes: (draft.loggedMinutes || 0) + 25 })}
-              className="px-2.5 py-1 rounded bg-[#2eb899] text-black font-semibold text-xs flex items-center gap-1"
+              className="px-3 py-1 rounded-lg bg-emerald-500 text-black font-bold text-xs flex items-center gap-1"
             >
               <Play className="w-3 h-3" /> +25m Focus
             </button>
             <button
               type="button"
               onClick={() => setDraft({ ...draft, loggedMinutes: 0 })}
-              className="p-1 rounded bg-[#333333] text-zinc-300 hover:text-white"
+              className="p-1 rounded-lg bg-[#2a2f3d] text-zinc-300 hover:text-white"
               title="Reset time"
             >
               <RotateCcw className="w-3.5 h-3.5" />
@@ -727,10 +886,10 @@ export const PlannerTaskModal: React.FC<PlannerTaskModalProps> = ({
         </div>
 
         {/* Checklist */}
-        <div className="space-y-2 border-t border-[#333333] pt-3">
+        <div className="space-y-2 border-t border-[#2a2f3d] pt-3">
           <div className="flex items-center justify-between">
             <span className="text-xs font-medium text-zinc-300 flex items-center gap-1.5">
-              <CheckSquare className="w-3.5 h-3.5 text-[#7f85f5]" />
+              <CheckSquare className="w-3.5 h-3.5 text-emerald-400" />
               Checklist ({chkDone} / {chkList.length})
             </span>
             <button
@@ -741,7 +900,7 @@ export const PlannerTaskModal: React.FC<PlannerTaskModalProps> = ({
                   checklist: [...chkList, ...generateSmartSubtasks(draft)]
                 })
               }
-              className="text-xs text-[#7f85f5] hover:underline flex items-center gap-1"
+              className="text-xs text-emerald-400 hover:underline flex items-center gap-1"
             >
               <Sparkles className="w-3.5 h-3.5" />
               AI Suggest subtasks
@@ -752,7 +911,7 @@ export const PlannerTaskModal: React.FC<PlannerTaskModalProps> = ({
             {chkList.map((item) => (
               <div
                 key={item.id}
-                className="flex items-center justify-between px-2.5 py-1.5 rounded bg-[#1a1a1a] text-xs"
+                className="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-[#101318] text-xs"
               >
                 <button
                   type="button"
@@ -765,7 +924,7 @@ export const PlannerTaskModal: React.FC<PlannerTaskModalProps> = ({
                   className="flex items-center gap-2 text-left flex-1"
                 >
                   {item.completed ? (
-                    <CheckCircle2 className="w-4 h-4 text-[#7f85f5] shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                   ) : (
                     <Circle className="w-4 h-4 text-zinc-500 shrink-0" />
                   )}
@@ -791,19 +950,19 @@ export const PlannerTaskModal: React.FC<PlannerTaskModalProps> = ({
               onChange={(e) => setNewChecklistTitle(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddChecklist())}
               placeholder="Add an item"
-              className="flex-1 px-3 py-1.5 rounded bg-[#1a1a1a] border border-[#3a3a3a] text-xs text-white"
+              className="flex-1 px-3 py-1.5 rounded-lg bg-[#101318] border border-[#2a2f3d] text-xs text-white"
             />
             <button
               type="button"
               onClick={handleAddChecklist}
-              className="px-3 py-1.5 rounded bg-[#333333] hover:bg-[#444444] text-xs text-white flex items-center gap-1"
+              className="px-3 py-1.5 rounded-lg bg-[#2a2f3d] hover:bg-[#373d4f] text-xs text-white flex items-center gap-1"
             >
               <Plus className="w-3.5 h-3.5" /> Add
             </button>
           </div>
         </div>
 
-        <div className="flex items-center justify-between pt-3 border-t border-[#333333]">
+        <div className="flex items-center justify-between pt-3 border-t border-[#2a2f3d]">
           {isAdmin ? (
             <button
               type="button"
@@ -822,14 +981,14 @@ export const PlannerTaskModal: React.FC<PlannerTaskModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-1.5 rounded-lg border border-[#3a3a3a] text-xs text-zinc-300 hover:bg-[#333333]"
+              className="px-4 py-1.5 rounded-xl border border-[#2a2f3d] text-xs text-zinc-300 hover:bg-[#2a2f3d]"
             >
               Cancel
             </button>
             <button
               type="button"
               onClick={() => onSave(draft)}
-              className="px-4 py-1.5 rounded-lg bg-[#5b5fc7] hover:bg-[#4f52b2] text-xs font-semibold text-white"
+              className="px-4 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-xs font-bold text-white"
             >
               Save Changes
             </button>

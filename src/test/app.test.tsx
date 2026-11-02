@@ -663,5 +663,28 @@ describe('NexusForge - Full Automated Comprehensive Test Suite', () => {
 
       expect(writeTextMock).toHaveBeenCalledWith(expect.stringContaining('?plan='));
     });
+
+    it('opens the Stress-Relief Break Arcade with Shooting Game and Car Racing Game', async () => {
+      await act(async () => {
+        render(<App />);
+      });
+
+      const arcadeBtn = screen.getByRole('button', { name: /Stress Relief Games/i });
+      await act(async () => {
+        fireEvent.click(arcadeBtn);
+      });
+
+      expect(screen.getByText(/Developer Stress-Relief Break Arcade/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/Cyber Bug Blaster/i).length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText(/Nitro Sprint Racer/i).length).toBeGreaterThanOrEqual(1);
+
+      // Switch to Car Racing Game
+      const racerTab = screen.getByRole('button', { name: /2\. Nitro Sprint Racer/i });
+      await act(async () => {
+        fireEvent.click(racerTab);
+      });
+
+      expect(screen.getByText(/Start Nitro Sprint Racer/i)).toBeInTheDocument();
+    });
   });
 });
